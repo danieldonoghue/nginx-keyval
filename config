@@ -13,6 +13,17 @@ if [ -n "$NGX_KEYVAL_ZONE_REDIS" ]; then
 
 END
   NGX_KEYVAL_LIBS="-lhiredis"
+else
+  if [ -n "$NGX_KEYVAL_ZONE_NATS" ]; then
+    cat << END >> $NGX_AUTO_CONFIG_H
+
+#ifndef NGX_HAVE_KEYVAL_ZONE_NATS
+#define NGX_HAVE_KEYVAL_ZONE_NATS 1
+#endif
+
+END
+    NGX_KEYVAL_LIBS="-lnats"
+  fi
 fi
 
 KEYVAL_SRCS="$ngx_addon_dir/src/ngx_keyval.c"

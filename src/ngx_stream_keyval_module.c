@@ -66,7 +66,7 @@ ngx_stream_keyval_conf_set_zone(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
   config = ngx_stream_conf_get_module_main_conf(cf, ngx_stream_keyval_module);
 
   return ngx_keyval_conf_set_zone(cf, cmd, conf,
-                                  config, &ngx_stream_keyval_module);
+                                  config, &ngx_stream_keyval_module, NGX_KEYVAL_ZONE_SHM);
 }
 
 #if (NGX_HAVE_KEYVAL_ZONE_REDIS)
@@ -235,7 +235,7 @@ ngx_stream_keyval_variable_set_handler(ngx_stream_session_t *s,
   val.data = v->data;
   val.len = v->len;
 
-  if (zone->type == NGX_KEYVAL_ZONE_SHM) {
+  if (zone->type == NGX_KEYVAL_ZONE_SHM || zone->type == NGX_KEYVAL_ZONE_NATS) {
     ngx_keyval_shm_ctx_t *ctx;
 
     ctx = ngx_keyval_shm_get_context(zone->shm, s->connection->log);
@@ -271,7 +271,7 @@ ngx_stream_keyval_variable_get_handler(ngx_stream_session_t *s,
     return NGX_OK;
   }
 
-  if (zone->type == NGX_KEYVAL_ZONE_SHM) {
+  if (zone->type == NGX_KEYVAL_ZONE_SHM || zone->tyoe == NGX_KEYVAL_ZONE_NATS) {
     ngx_keyval_shm_ctx_t *ctx;
 
     ctx = ngx_keyval_shm_get_context(zone->shm, s->connection->log);
